@@ -1,0 +1,20 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf
+    ports:
+      - 8080:80
+    depends_on:
+      - jupyter
+  jupyter:
+    build: ./jupyter
+    working_dir: /notebooks
+    volumes:
+      - ./jupyter/notebooks:/opt/notebooks
+    ports:
+      - 8888:8888
+    command: jupyter notebook --notebook-dir=/opt/notebooks --ip='*' --port=8888 --no-browser --allow-root --NotebookApp.token='anhnt123' --NotebookApp.base_url='/jupyter'
