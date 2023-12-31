@@ -42,6 +42,7 @@ services:
   jupyter:
     build: ./jupyter
     working_dir: /notebooks
+    container_name: jupyter
     volumes:
       - ./jupyter/notebooks:/opt/notebooks
     ports:
