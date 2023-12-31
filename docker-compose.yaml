@@ -39,28 +39,14 @@ services:
     depends_on:
       - mariadb
 
-  # nextcloud:
-  #   image: linuxserver/nextcloud
-  #   container_name: nextcloud
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=mysqlRootPassword_hbQYe9z21M87EOE
-  #     - MYSQL_DATABASE=nextcloud_db
-  #     - MYSQL_USER=nc_user
-  #     - MYSQL_PASSWORD=nc_password
-  #   volumes:
-  #     - ./nextcloud/config:/app/www/public/config
-  #   depends_on: 
-  #     - mariadb
-  #   restart: unless-stopped
-    
-  # jupyter:
-  #   build: ./jupyter
-  #   working_dir: /notebooks
-  #   volumes:
-  #     - ./jupyter/notebooks:/opt/notebooks
-  #   ports:
-  #     - 8888:8888
-  #   command: jupyter notebook --notebook-dir=/opt/notebooks --ip='*' --port=8888 --no-browser --allow-root --NotebookApp.token='anhnt123' --NotebookApp.base_url='/jupyter'
+  jupyter:
+    build: ./jupyter
+    working_dir: /notebooks
+    volumes:
+      - ./jupyter/notebooks:/opt/notebooks
+    ports:
+      - 8888:8888
+    command: jupyter notebook --notebook-dir=/opt/notebooks --ip='*' --port=8888 --no-browser --allow-root --NotebookApp.token='anhnt123' --NotebookApp.base_url='/jupyter'
 
   # # Gitlab Setup
   # gitlab:
