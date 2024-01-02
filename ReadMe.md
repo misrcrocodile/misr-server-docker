@@ -23,3 +23,11 @@ $CONFIG = array (
   'memcache.local' => '\\OC\\Memcache\\APCu'
 );
 ```
+
+## 2. Gitlab
+After log-in to system, please change password by using root account below.
+```
+# Default username: root 
+# How to get default password
+docker exec -it gitlab grep ‘Password:’ /etc/gitlab/initial_root_password
+```

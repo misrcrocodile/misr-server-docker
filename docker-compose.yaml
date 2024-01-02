@@ -10,10 +10,10 @@ services:
     ports:
       - 80:80
     depends_on:
-      # - jupyter
+      - jupyter
       - mariadb
       - nextcloud
-      # - gitlab
+      - gitlab
 
   mariadb:
     image: mariadb
@@ -49,34 +49,14 @@ services:
       - 8888:8888
     command: jupyter notebook --notebook-dir=/opt/notebooks --ip='*' --port=8888 --no-browser --allow-root --NotebookApp.token='anhnt123' --NotebookApp.base_url='/jupyter'
 
-  # # Gitlab Setup
-  # gitlab:
-  #   restart: always
-  #   image: gitlab/gitlab-ce:latest
-  #   container_name: gitlab
-  #   volumes:
-  #     - ./gitlab/config:/etc/gitlab:Z
-  #     - ./gitlab/logs:/var/log/gitlab:Z
-  #     - ./gitlab/data:/var/opt/gitlab:Z
-  #     - ./gitlab/backups:/mnt/backups/gitlab:Z
-  #   environment:
-  #     GITLAB_OMNIBUS_CONFIG: |
-  #       # URL
-  #       external_url 'http://misr-desktop:8080/gitlab'
-  #       # Backup directory
-  #       gitlab_rails['backup_path'] = '/mnt/backups/gitlab'
-  #       # Timezone
-  #       gitlab_rails['time_zone'] = 'Asia/Tokyo'
-  #       # E-mail
-  #       gitlab_rails['smtp_enable'] = true
-  #       gitlab_rails['smtp_address'] = "smtp.gmail.com"
-  #       gitlab_rails['smtp_port'] = 587
-  #       gitlab_rails['smtp_user_name'] = "user@gmail.com"
-  #       gitlab_rails['smtp_password'] = "PASSWORD"
-  #       gitlab_rails['smtp_domain'] = "smtp.gmail.com"
-  #       gitlab_rails['smtp_authentication'] = "login"
-  #       gitlab_rails['smtp_enable_starttls_auto'] = true
-  #       gitlab_rails['smtp_tls'] = false
-  #       gitlab_rails['smtp_openssl_verify_mode'] = 'peer' # Can be: 'none', 'peer', 'client_once', 'fail_if_no_peer_cert', see http://api.rubyonrails.org/classes/ActionMailer/Base.html
-  #     # Add any other gitlab.rb configuration here, each on its own line
-  #     GITLAB_RELATIVE_URL_ROOT: /gitlab
+  gitlab:
+    image: 'gitlab/gitlab-ce:latest'
+    container_name: gitlab
+    restart: always
+    hostname: "misr-server"
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://misr-server/gitlab'
+
+    
+ 
