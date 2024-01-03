@@ -3,10 +3,9 @@ DROP DATABASE IF EXISTS nextcloud_db;
 CREATE DATABASE nextcloud_db;
 GRANT ALL PRIVILEGES ON nextcloud_db.* TO 'nc_user'@'%' IDENTIFIED BY 'nc_password' WITH GRANT OPTION;
 
--- DROP DATABASE IF EXISTS wp_db;
--- CREATE DATABASE wp_db;
--- DROP USER IF EXISTS 'wp_user'@'localhost';
--- GRANT ALL PRIVILEGES ON wp_db.* TO 'wp_user'@'%' IDENTIFIED BY 'wp_password' WITH GRANT OPTION;
+DROP DATABASE IF EXISTS wordpress_db;
+CREATE DATABASE wordpress_db;
+GRANT ALL PRIVILEGES ON wordpress_db.* TO 'wp_user'@'%' IDENTIFIED BY 'wp_password' WITH GRANT OPTION;
 
 -- DROP DATABASE IF EXISTS piwigo_db;
 -- CREATE DATABASE piwigo_db;
