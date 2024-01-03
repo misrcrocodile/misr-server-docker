@@ -14,15 +14,16 @@ services:
       - mariadb
       - nextcloud
       - gitlab
+      - wordpress
 
   mariadb:
     image: mariadb
     container_name: mariadb
     environment:
-      - MYSQL_ROOT_PASSWORD=mysqlRootPassword_hbQYe9z21M87EOE
-      - MYSQL_DATABASE=mydb
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=password
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
     volumes:
       - ./mysql:/docker-entrypoint-initdb.d
     restart: unless-stopped
@@ -32,10 +33,10 @@ services:
     container_name: nextcloud
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=mysqlRootPassword_hbQYe9z21M87EOE
-      - MYSQL_DATABASE=nextcloud_db
-      - MYSQL_USER=nc_user
-      - MYSQL_PASSWORD=nc_password
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${NEXTCLOUD_DB}"
+      MYSQL_USER: "${NEXTCLOUD_USER}"
+      MYSQL_PASSWORD: "${NEXTCLOUD_PASSWORD}"
     depends_on:
       - mariadb
 
@@ -45,18 +46,28 @@ services:
     container_name: jupyter
     volumes:
       - ./jupyter/notebooks:/opt/notebooks
-    ports:
-      - 8888:8888
-    command: jupyter notebook --notebook-dir=/opt/notebooks --ip='*' --port=8888 --no-browser --allow-root --NotebookApp.token='anhnt123' --NotebookApp.base_url='/jupyter'
-
+    command: jupyter notebook --notebook-dir=/opt/notebooks --ip='*' --port=80 --no-browser --allow-root --NotebookApp.token='anhnt123' --NotebookApp.base_url='/jupyter'
+    
   gitlab:
     image: 'gitlab/gitlab-ce:latest'
     container_name: gitlab
     restart: always
-    hostname: "misr-server"
+    hostname: "${SERVER_NAME}"
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'http://misr-server/gitlab'
-
-    
- 
+        external_url 'http://${SERVER_NAME}/gitlab'
+  
+  wordpress:
+    build: ./wordpress
+    container_name: wordpress
+    environment:
+      WP_SUBDIRECTORY: "${WP_SUBDIRECTORY}"
+      WORDPRESS_DB_HOST: "mariadb"
+      WORDPRESS_DB_USER: "${WORDPRESS_DB_USER}"
+      WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASSWORD}"
+      WORDPRESS_DB_NAME: "${WORDPRESS_DB_NAME}"
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_HOME','http://${SERVER_NAME}/blog');
+        define('WP_SITEURL','http://${SERVER_NAME}/blog');
+    depends_on:
+      - mariadb
