@@ -9,12 +9,27 @@ services:
       - ./nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf
     ports:
       - 80:80
+    networks:
+      - misr-network
     depends_on:
-      - jupyter
+      - grafana
       - mariadb
+      - phpmyadmin
+      - jupyter
       - nextcloud
       - gitlab
       - wordpress
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: "${GF_PASSWORD}"
+      GF_SERVER_ROOT_URL: "http://${SERVER_NAME}/grafana/"
+    depends_on:
+      - mariadb
+    networks:
+      - misr-network
 
   mariadb:
     image: mariadb
@@ -27,7 +42,22 @@ services:
     volumes:
       - ./mysql:/docker-entrypoint-initdb.d
     restart: unless-stopped
+    networks:
+      - misr-network
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    depends_on:
+      - mariadb
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PHP_UPLOAD_MAX_FILESIZE: 100M
+      PHP_MEMORY_LIMIT: 256M
+    networks:
+      - misr-network
+  
   nextcloud:
     image: nextcloud
     container_name: nextcloud
@@ -39,6 +69,8 @@ services:
       MYSQL_PASSWORD: "${NEXTCLOUD_PASSWORD}"
     depends_on:
       - mariadb
+    networks:
+      - misr-network
 
   jupyter:
     build: ./jupyter
@@ -47,7 +79,9 @@ services:
     volumes:
       - ./jupyter/notebooks:/opt/notebooks
     command: jupyter notebook --notebook-dir=/opt/notebooks --ip='*' --port=80 --no-browser --allow-root --NotebookApp.token='anhnt123' --NotebookApp.base_url='/jupyter'
-    
+    networks:
+      - misr-network
+
   gitlab:
     image: 'gitlab/gitlab-ce:latest'
     container_name: gitlab
@@ -56,7 +90,9 @@ services:
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'http://${SERVER_NAME}/gitlab'
-  
+    networks:
+      - misr-network
+
   wordpress:
     build: ./wordpress
     container_name: wordpress
@@ -71,3 +107,8 @@ services:
         define('WP_SITEURL','http://${SERVER_NAME}/blog');
     depends_on:
       - mariadb
+    networks:
+      - misr-network
+
+networks:
+  misr-network:
