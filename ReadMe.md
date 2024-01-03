@@ -1,6 +1,6 @@
 # Misr Server Docker
 
-This repo include setup of application suck as: Jupyter, Nextcloud. For running this project, run code below:
+This repo include setup of application such as: Jupyter, Nextcloud. For running this project, run code below:
 ```
 # Turn on docker
 docker-compose up -d
